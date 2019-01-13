@@ -1,0 +1,131 @@
+#==============================================================================================#
+#  ▄██████▄     ▄███████▄    ▄████████ ▄██   ▄       ███     ███    █▄      ███      ▄██████▄  #
+# ███    ███   ███    ███   ███    ███ ███   ██▄ ▀█████████▄ ███    ███ ▀█████████▄ ███    ███ #
+# ███    ███   ███    ███   ███    █▀  ███▄▄▄███    ▀███▀▀██ ███    ███    ▀███▀▀██ ███    ███ #
+# ███    ███   ███    ███   ███        ▀▀▀▀▀▀███     ███   ▀ ███    ███     ███   ▀ ███    ███ #
+# ███    ███ ▀█████████▀  ▀███████████ ▄██   ███     ███     ███    ███     ███     ███    ███ #
+# ███    ███   ███                 ███ ███   ███     ███     ███    ███     ███     ███    ███ #
+# ███    ███   ███           ▄█    ███ ███   ███     ███     ███    ███     ███     ███    ███ #
+#  ▀██████▀   ▄████▀       ▄████████▀   ▀█████▀     ▄████▀   ████████▀     ▄████▀    ▀██████▀  #
+#==============================================================================================#
+
+#====================== License =======================#
+#                 Version: 0.1 - BETA                  #
+#                   Author: ZeTioZ                     #
+# OpsyRecipes © by ZeTioZ is licensed under a Creative #
+#     Commons Attribution - Non Commercial Usage -     #
+#           ShareAlike 4.0 Unported License            #
+#====================== License =======================#
+
+#===================== Nota Bene =====================#
+# You want to modify the order of the help command ?  #
+#     Go on the line ### and change the order of      #
+#             The options. %nl% = New Line.           #
+#                        Enjoy !                      #
+#===================== Nota Bene =====================#
+
+#========================= Options Section =========================#
+options:
+  #================ Configuration ================#
+	#===== Options =====#
+	database: opsytuto
+	developer.mode: true
+	permission.debuger: true
+	skript.path: %script%
+	#===== Options =====#
+
+	#===== Commands =====#
+	opsytuto: opsytuto
+	opsytuto.aliases: tutoriel, tuto, otuto
+	opsytuto.reload: reload
+	#===== Commands =====#
+
+	#===== Permissions =====#
+	opsytuto.permission.reload: opsytuto.reload
+	#===== Permissions =====#
+  #================ Configuration ================#
+
+  #================ Messages ================#
+  	#===== Commands Messages =====#
+	prefix: &6[&dOpsyTuto&6]
+	opsylia: &8[&c!&8]  &0[&8Assistante&0] &7Opsylia &6»
+	opsytuto.no_tutorial: &cVous avez décidé de ne pas faire le tutoriel. Si vous voulez faire le tutoriel, tapez la commande /tutoriel.
+	error.can_not_close: &cVous ne pouvez pas fermer cette fenêtre manuellement. Merci d'utiliser les boutons.
+	error.permission: &cVous n'avez pas la permission de faire cela.
+	error.permission.nd1: &cVous avez besoin de la permission
+	error.permission.nd2: &cpour exécuter cette commande.
+  	#===== Commands Messages =====#
+
+	#===== Help Messages =====#
+
+	#===== Help Messages =====#
+  #================ Messages ================#
+#========================= Options Section =========================#
+
+#Création du menu de validation OBLIGATOIRE
+on first join:
+	set {{@database}::%player%} to true
+#Fonction d'ouverture du menu d'acceptation
+function openAcceptationCase(player: player):
+	if {{@database}::%{_player}%} is true:
+		wait 1 tick
+		open virtual chest with size 1 named "&8Voulez-vous faire le tutoriel ?" to {_player}
+		wait 1 tick
+		set {_count} to 0
+		loop 9 times:
+			make a gui slot {_count} of {_player} with a gray glass pane named " " to do nothing
+			add 1 to {_count}
+		make a gui slot 3 of {_player} with green glass pane named "&eFaire le tutoriel" with lore "&dClique ici pour lancer le tutoriel du serveur" to run:
+			delete {{@database}::%{_player}%}
+			close player's inventory
+			execute player command "/tutoriel"
+		make a gui slot 5 of {_player} with green glass pane named "&eNe pas faire le tutoriel" with lore "&dClique ici pour fermer cette fenêtre||&dEt ne pas faire ce tutoriel" to run:
+			send "{@prefix} {@opsytuto.no_tutorial}" to {_player}
+			delete {{@database}::%{_player}%}
+			close player's inventory
+#Fonction d'ouverture du menu d'acceptation
+on Authme login:
+	wait 5 ticks
+	openAcceptationCase(player)
+on inventory close:
+	if {{@database}::%player%} is true:
+		send "{@prefix} {@error.can_not_close}" to player
+		wait 1 tick
+		openAcceptationCase(player)
+#Création du menu de validation OBLIGATOIRE
+
+#Création de la commande /tutoriel
+command /{@opsytuto} [<text>]:
+	aliases: {@opsytuto.aliases}
+	trigger:
+		if arg 1 is set:
+			if arg 1 is "{@opsytuto.reload}":
+				if player has permission "{@opsytuto.permission.reload}":
+					if {@developer.mode} is true:
+						execute player command "/sk reload {@skript.path}"
+					else:
+						execute console command "/sk reload {@skript.path}"
+				else:
+					send "{@prefix} {@error.permission}" to player
+					if {@permission.debuger} is true:
+						send "{@prefix} {@error.permission.nd1} {@opsytuto.permission.reload} {@error.permission.nd2}" to player
+			else:
+				execute player command "/{@opsytuto}"
+		else:
+			send player title "&2Bonjour, %player% !" with subtitle "&2Et bienvenue sur OpsyCraft" for 3 seconds
+			send player title "&2Regardez le tchat !" with subtitle "&2Opsylia va vous guidez dans le tutoriel !" for 3 seconds
+			send "{@opsylia} &a&oHey salut, moi c'est Opsylia ! Je vais t'aider à comprendre ce magnifique serveur qu'est OpsyCraft !" to player
+			wait 1 seconds
+			send "{@opsylia} &a&oN'oublie pas, lorsque je parle d'un endroit, tu peux à tout moment cliquer dessus pour t'y téléporter !" to player
+			wait 4 seconds
+			send "{@opsylia} &a&oOpsyCraft est un serveur PvP-Faction qui a des quêtes et des objets inédits !" to player
+			wait 4 seconds
+			send "{@opsylia} &a&oPour consulter la liste de ces objets, tu peux utiliser la commande &d&o""/oc"" &a&o!" to player
+			wait 4 seconds
+			execute console command "/tellraw %player% {""text"":""{@opsylia} &a&oPour bien commencer, tu peux te &a&orendre à la mine en utilisant la commande &d&o/mine &a&o!"",""hoverEvent"":{""action"":""show_text"",""value"":""&2&lClique ici pour te téléporter à la mine !""},""clickEvent"":{""action"":""run_command"",""value"":""/mine""}}"
+			send "{@opsylia} &a&oN'oublie pas, si tu veux t'y téléporter, tu peux cliquer dessus !" to player
+			wait 4 seconds
+
+#Création de la commande /tutoriel
+
+#Téléportation aux endroits depuis le tchat (quand on parle d'un endroit)
