@@ -32,6 +32,7 @@ options:
 	developer.mode: true
 	permission.debuger: true
 	skript.path: %script%
+	database.path: plugins/OpsyTuto
 	#===== Options =====#
 
 	#===== Commands =====#
@@ -49,8 +50,11 @@ options:
   	#===== Commands Messages =====#
 	prefix: &6[&dOpsyTuto&6]
 	opsylia: &8[&c!&8]  &0[&8Assistante&0] &7Opsylia &6»
-	opsytuto.no_tutorial: &cVous avez décidé de ne pas faire le tutoriel. Si vous voulez faire le tutoriel, tapez la commande /tutoriel.
+	opsytuto.no_tutorial: &cVous avez décidé de ne pas faire le tutoriel. Si vous voulez faire le tutoriel, tapez la commande &2""&d/tutoriel&2""&c.
+	opsytuto.tutorial_stopped: &cVous avez arrêté le tutoriel. Pour revoir les tutoriels, utilisez la commande &2""&d/tutoriel&2""&c.
+	opsytuto.tutorial_end: &cLe tutoriel est désormais terminé ! Si vous voulez le revoir, utilisez la commande &2""&d/tutoriel&2""&c.
 	error.can_not_close: &cVous ne pouvez pas fermer cette fenêtre manuellement. Merci d'utiliser les boutons.
+	error.can_not_chat: &cVous ne pouvez pas parler dans le chat pendant le tutoriel ! Tapez &2""&dstop&2"" &cdans le chat pour arrêter le tutoriel.
 	error.permission: &cVous n'avez pas la permission de faire cela.
 	error.permission.nd1: &cVous avez besoin de la permission
 	error.permission.nd2: &cpour exécuter cette commande.
@@ -65,6 +69,9 @@ options:
 #Création du menu de validation OBLIGATOIRE
 on first join:
 	set {{@database}::%player%} to true
+on quit:
+	if {{@database}::%player%} is true:
+		delete {{@database}::%{player}%}
 #Fonction d'ouverture du menu d'acceptation
 function openAcceptationCase(player: player):
 	if {{@database}::%{_player}%} is true:
@@ -76,14 +83,23 @@ function openAcceptationCase(player: player):
 			make a gui slot {_count} of {_player} with a gray glass pane named " " to do nothing
 			add 1 to {_count}
 		make a gui slot 3 of {_player} with green glass pane named "&eFaire le tutoriel" with lore "&dClique ici pour lancer le tutoriel du serveur" to run:
-			delete {{@database}::%{_player}%}
 			close player's inventory
-			execute player command "/tutoriel"
+			execute player command "/{@opsytuto}"
 		make a gui slot 5 of {_player} with green glass pane named "&eNe pas faire le tutoriel" with lore "&dClique ici pour fermer cette fenêtre||&dEt ne pas faire ce tutoriel" to run:
 			send "{@prefix} {@opsytuto.no_tutorial}" to {_player}
 			delete {{@database}::%{_player}%}
 			close player's inventory
 #Fonction d'ouverture du menu d'acceptation
+
+#Fonction fin du tutoriel
+function tutorialEnd(player: player):
+	if {{@database}::%{_player}%} is true:
+		wait 1 tick
+		if {_player} is online:
+			send "{@opsylia} {@opsytuto.tutorial_end}" to {_player}
+			delete {{@database}::%{_player}%}
+#Fonction fin du tutoriel
+
 on Authme login:
 	wait 5 ticks
 	openAcceptationCase(player)
@@ -110,22 +126,160 @@ command /{@opsytuto} [<text>]:
 					if {@permission.debuger} is true:
 						send "{@prefix} {@error.permission.nd1} {@opsytuto.permission.reload} {@error.permission.nd2}" to player
 			else:
-				execute player command "/{@opsytuto}"
+				execute console command "/tellraw %player% {""text"":""{@opsylia} &a&oDe plus, tu peux utiliser la commande &d/kit &a&opour ouvrir le menu des kits et la commande &d/mine &a&opour te &a&otéléporter à la mine !"",""hoverEvent"":{""action"":""show_text"",""value"":""&2&lClique ici pour te téléporter à la mine !""},""clickEvent"":{""action"":""run_command"",""value"":""/mine""}}"
+				#execute player command "/{@opsytuto}"
 		else:
-			send player title "&2Bonjour, %player% !" with subtitle "&2Et bienvenue sur OpsyCraft" for 3 seconds
-			send player title "&2Regardez le tchat !" with subtitle "&2Opsylia va vous guidez dans le tutoriel !" for 3 seconds
-			send "{@opsylia} &a&oHey salut, moi c'est Opsylia ! Je vais t'aider à comprendre ce magnifique serveur qu'est OpsyCraft !" to player
-			wait 1 seconds
-			send "{@opsylia} &a&oN'oublie pas, lorsque je parle d'un endroit, tu peux à tout moment cliquer dessus pour t'y téléporter !" to player
-			wait 4 seconds
-			send "{@opsylia} &a&oOpsyCraft est un serveur PvP-Faction qui a des quêtes et des objets inédits !" to player
-			wait 4 seconds
-			send "{@opsylia} &a&oPour consulter la liste de ces objets, tu peux utiliser la commande &d&o""/oc"" &a&o!" to player
-			wait 4 seconds
-			execute console command "/tellraw %player% {""text"":""{@opsylia} &a&oPour bien commencer, tu peux te &a&orendre à la mine en utilisant la commande &d&o/mine &a&o!"",""hoverEvent"":{""action"":""show_text"",""value"":""&2&lClique ici pour te téléporter à la mine !""},""clickEvent"":{""action"":""run_command"",""value"":""/mine""}}"
-			send "{@opsylia} &a&oN'oublie pas, si tu veux t'y téléporter, tu peux cliquer dessus !" to player
-			wait 4 seconds
+			if {{@database}::%player%} is true:
+				send player title "&2Bonjour, %player% !" with subtitle "&2Et bienvenue sur OpsyCraft" for 3 seconds
+				send player title "&2Regardez le tchat !" with subtitle "&2Opsylia va vous guidez dans le tutoriel !" for 3 seconds
+				send "{@opsylia} &a&oHey salut, moi c'est Opsylia ! Je vais t'aider à comprendre ce magnifique serveur qu'est OpsyCraft !" to player
+				wait 1 seconds
+				send "{@opsylia} &a&oN'oublie pas, lorsque je parle d'un endroit, tu peux à tout moment cliquer dessus pour t'y téléporter !" to player
+				wait 1 seconds
+				send "{@opsylia} &a&oDe plus, tu peux arrêter ce tutoriel à tout moment en tapant &2""&dstop&2"" &a&odans le chat !" to player
+				wait 5 seconds
+				if {{@database}::%player%} is true:
+					send "{@opsylia} &a&oOpsyCraft est un serveur PvP-Faction qui possède des quêtes et des objets inédits !" to player
+					wait 4 seconds
+					send "{@opsylia} &a&oPour consulter la liste de ces objets, tu peux utiliser la commande &d&o""/oc"" &a&o!" to player
+					wait 7 seconds
+					if {{@database}::%player%} is true:
+						send "{@opsylia} &a&oOn sait que tout le monde n'a pas les moyens de s'offrir de beau objets dans la boutique du site !" to player
+						wait 4 seconds
+						send "{@opsylia} &a&oAlors pour compenser à celà, OpsyCraft te propose un système de conversion !" to player
+						wait 4 seconds
+						send "{@opsylia} &a&oEn effet, tu peux convertir tes Hearts (monnaie en jeu) en OpsyCoins (monnaie du site) !" to player
+						wait 4 seconds
+						send "{@opsylia} &a&oEt tout celà avec une simple commande, &2""&d/hto&2"" &a&o!" to player
+						wait 4 seconds
+						send "{@opsylia} &a&oD'ailleurs, tu peux consulter ton solde de points avec la commande &2""&d/pts&2"" &a&o!" to player
+						wait 7 seconds
+						if {{@database}::%player%} is true:
+							send "{@opsylia} &a&oSi jamais tu souhaites gagner de l'argent sur le serveur, OpsyCraft te propose plusieurs moyens !" to player
+							wait 4 seconds
+							send "{@opsylia} &a&oLa première possibilitée qui s'offre à toi, est celle de rejoindre un métier ! " to player
+							wait 4 seconds
+							send "{@opsylia} &a&oPour ce faire, il faut que tu utilises la commande &2""&d/jobs join&2"" &a&oafin de rejoindre un dés métiers disponibles !" to player
+							wait 4 seconds
+							send "{@opsylia} &a&oLa seconde possibilitée, est celle de revendre des objets, grâce à l'hôtel des ventes ou au shop revente !" to player
+							wait 4 seconds
+							send "{@opsylia} &a&oPour accéder à l'hôtel des ventes utilises la commande &2""&d/hdv&2"" &a&oet laisse toi guider afin de gagner de l'argent !" to player
+							wait 4 seconds
+							send "{@opsylia} &a&oOu alors utilises &2""&d/shop&2"" &a&opour afficher le menu des shops et sélectionne la revente pour revendre tes objets !" to player
+							wait 7 seconds
+							if {{@database}::%player%} is true:
+								send "{@opsylia} &a&oPerdre son xp lorsque l'on meurt est plutôt frustrant. C'est pour cela que sur OpsyCraft tu peux le stocker dans des bouteilles !" to player
+								wait 4 seconds
+								send "{@opsylia} &a&oEn effet, en utilisant la commande &2""&d/xpbottle all&2"" &a&o, tu pourras placer tout ton xp dans une bouteille à xp !" to player
+								wait 4 seconds
+								send "{@opsylia} &a&oDe plus, si tu meurts avec de l'xp, une bouteille d'xp sera droppée avec le montant d'xp que tu avais !" to player
+								wait 4 seconds
+								send "{@opsylia} &a&oAinsi, tu ne perdras plus jamais ton xp obtenue si durement !" to player
+								wait 7 seconds
+								if {{@database}::%player%} is true:
+									send "{@opsylia} &a&oOpsyCraft te propose également de commencer ton aventure avec un petit coup de pouce grâce aux kits, à la mine et au rtp !" to player
+									wait 4 seconds
+									send "{@opsylia} &a&oGrâce à la commande &2""&d/rtp&2"" &a&otu peux téléporter dans un endroit aléatoire de la map sans te faire tuer par des joueurs de la zone de guerre !" to player
+									wait 4 seconds
+									execute console command "/tellraw %player% {""text"":""{@opsylia} &a&oDe plus, tu peux utiliser la commande &d/kit &a&opour ouvrir le menu des kits et la commande &d/mine &a&opour te &a&otéléporter à la mine !"",""hoverEvent"":{""action"":""show_text"",""value"":""&2&lClique ici pour te téléporter à la mine !""},""clickEvent"":{""action"":""run_command"",""value"":""/mine""}}"
+									wait 4 seconds
+									send "{@opsylia} &a&oN'oublie pas, tu peux cliquer sur les endroits mentionné dans le tutoriel pour t'y téléporter !" to player
+									wait 4 seconds
+									send "{@opsylia} &a&oDe plus, grâce à la commande &2""&d/coffre&2"" &a&otu as accès à deux coffres qui te suivrons partout avec toi ! Parfait pour y ranger vos précieux minerais !" to player
+									wait 4 seconds
+									send "{@opsylia} &a&oEt grâce à la conversion de vos Hearts en OpsyCoins, vous pourrez étendre cet espace de stockage en achetant de nouveaux coffres dans la boutique ! &2""&d/boutique&2"" &a&o!" to player
+									wait 7 seconds
+									if {{@database}::%player%} is true:
+										send "{@opsylia} &a&oOpsyCraft n'est pas un simple serveur faction, il t'emmèra grâce à ses quêtes dans une aventure épique !" to player
+										wait 4 seconds
+										send "{@opsylia} &a&oTu peux commencer ton aventure en allant parler à &2""&bArklor&2"" &a&o! C'est le Roi, il t'apprendra le code des chevaliers avant de te lancer dans ton aventure !"  to player
+										wait 4 seconds
+										send "{@opsylia} &a&oEnsuite, il te suffira de suivre ton aventure grâce à ton livre des quêtes ! Pour l'ouvrir utilise la commande &2""&d/book&2"" &a&o!" to player
+										wait 7 seconds
+										if {{@database}::%player%} is true:
+											send "{@opsylia} &a&oOpsyCraft te propose également une panoplie d'enchantements supplémentaire grâce à son système de runes d'enchantements et de pierres célestes!" to player
+											wait 4 seconds
+											send "{@opsylia} &a&oTu peux obtenir des runes et des pierres célestes en creusant ou en tuant des monstres !" to player
+											wait 4 seconds
+											send "{@opsylia} &a&oPour appliquer une rune sur un équipement, c'est simple ! Il te suffira de glisser ta rune sur l'équipement compatible (tout est marqué sur la rune) !" to player
+											wait 4 seconds
+											send "{@opsylia} &a&oMais attention ! Celà peut très bien échouer ! Si l'enchantement échoue alors ton équipement sera détruit !" to player
+											wait 4 seconds
+											send "{@opsylia} &a&oDe plus, tu pourras vendre tes runes inutiles avec la commande &2""&d/tinkerer&2"" &a&oou à l'inverse en acheter avec la commande &2""&d/enchanter&2"" &a&ocontre de l'xp !" to player
+											wait 4 seconds
+											send "{@opsylia} &a&oPour connaître chaque effet des enchantements de runes il te suffit de visiter la page dédiée à celà sur notre forum ! https://bit.ly/2GJWyGR" to player
+											wait 4 seconds
+											send "{@opsylia} &a&oPour appliquer une pierre céleste c'est aussi très simple ! Il suffit que tu tapes la commande &2""&d/hs up&2"" &a&o, ensuite tu n'auras plus qu'à y déposer ton équipement et ta pierre !" to player
+											wait 4 seconds
+											send "{@opsylia} &a&oLes pierres célestes servent à augmenter l'attaque ou la défense de tes équipements ! Mais attention, car comme les runes, les pierres célestes peuvent aussi casser ton équipement !" to player
+											wait 7 seconds
+											if {{@database}::%player%} is true:
+												send "{@opsylia} &a&oMais ce n'est pas tout ! Sur OpsyCraft, tu peux protéger ta base de plusieurs façons !" to player
+												wait 4 seconds
+												send "{@opsylia} &a&oPremièrement et la plus classique, avec de l'obsidienne, mais attention celle-ci est cassable par la tnt et l'eau ne te protège pas des explosions !" to player
+												wait 4 seconds
+												send "{@opsylia} &a&oDeuxièmement, tu as les tourelles automatiques ! Celle-ci vont tirer sur tes assaillant automatiquement lorsqu'ils entrent dans leurs rayons d'action !" to player
+												wait 4 seconds
+												send "{@opsylia} &a&oPour creér une tourelle c'est simple ! Tu dois juste poser n'importe quelle tête sur une barrière (tu peux crafter celles de wither dans le &2""&d/oc&2""&a&o) !" to player
+												wait 7 seconds
+												if {{@database}::%player%} is true:
+													send "{@opsylia} &a&oVous le saurez surement mieux que nous, mais un serveur faction qui se respecte se doit d'avoir de la compétition !" to player
+													wait 4 seconds
+													send "{@opsylia} &a&oC'est là que le &2""&d/f top&2"" &a&ointervient ! Grâce à ce classement, on peut savoir quels sont les meilleurs factions du serveur !" to player
+													wait 4 seconds
+													send "{@opsylia} &a&oMais pas que ! En effet, en plaçant votre souris sur une des factions présentent dans la liste, vous pourrez voir pourquoi elles valent autant !" to player
+													wait 4 seconds
+													send "{@opsylia} &a&oAinsi, il est plus intéressant de piller les plus riches en minerais dont vous avez besoin !" to player
+													wait 4 seconds
+													send "{@opsylia} &a&oAttention tout de même ! Car le classement ne comptera que vos coffres et spawners se trouvant dans vos claims de faction !" to player
+													wait 7 seconds
+													if {{@database}::%player%} is true:
+														send "{@opsylia} &a&oEn fin, il y a deux dernière petites fonctionnalités importantes sur OpsyCraft ! Le PvP-Soup et le &2""&d/opt&2""&a&o !" to player
+														wait 4 seconds
+														send "{@opsylia} &a&oEt oui ! Le PvP-Soup est activé ! Ce qui veut dire que vous buvez vos soupes instantanément et que celles-ci vous rendent 4 coeurs ou 4 barres de faim !" to player
+														wait 4 seconds
+														send "{@opsylia} &a&oEt grâce à la commande &2""&d/opt&2"" &a&ovous allez pouvoir activer une fonction d'anti-cheat le ""PvP-Distance"" !" to player
+														wait 4 seconds
+														send "{@opsylia} &a&oGrâce à cette fonctione vous obtiendrez en temps réel la distance entre vous et votre attaquant ! Ainsi, vous saurez si celui-ci à une reach exagérée et vous pourrez le signaler !" to player
+														wait 4 seconds
+														send "{@opsylia} &a&oMais ce n'est pas tout !  Le &2""&d/opt&2"" &a&ocontient aussi une fonction de statistiques vous montrant vos morts, kills et votre ratio !" to player
+														wait 7 seconds
+							tutorialEnd(player)
+							stop
+					#execute console command "/tellraw %player% {""text"":""{@opsylia} &a&oUtilise la commande &2""&d/kit&2"" &a&opour ouvrir le menu des kits et la commande &2""&d/mine&2"" &a&opour te téléporter à la mine !"",""hoverEvent"":{""action"":""show_text"",""value"":""&2&lClique ici pour te téléporter à la mine !""},""clickEvent"":{""action"":""run_command"",""value"":""/mine""}}"
+					#send "{@opsylia} &a&oN'oublie pas, si tu veux t'y téléporter, tu peux cliquer dessus !" to player
+					#wait 4 seconds
+			else:
+				wait 1 tick
+				open virtual chest with size 2 named "&8Tutoriels disponibles..." to player
+				wait 1 tick
+				set {_count} to 0
+				loop 9 times:
+					make a gui slot {_count} of player with a gray glass pane named " " to do nothing
+					add 1 to {_count}
+				make a gui slot 0 of player with green glass pane named "&eLes items customs" with lore "&dClique ici pour lancer le tutoriel||&dSur les items customs" to run:
+					close player's inventory
+					#Fonction du tutoriel des items custom (customItemTutorial)
+				make a gui slot 1 of player with green glass pane named "&eLes enchantements de runes" with lore "&dClique ici pour lancer le tutoriel||&dSur les enchantements de runes" to run:
+					close player's inventory
+					#Fonction du tutoriel des enchantements de runes (runesEchantementsTutorial)
+
+on chat:
+	if {{@database}::%player%} is true:
+		if message contains "stop":
+			cancel event
+			delete {{@database}::%player%}
+			send "{@opsylia} {@opsytuto.tutorial_stopped}" to player
+			stop
+		else:
+			cancel event
+			send "{@opsylia} {@error.can_not_chat}" to player
 
 #Création de la commande /tutoriel
 
 #Téléportation aux endroits depuis le tchat (quand on parle d'un endroit)
+
+#Unused code lines
+	#send "{@opsylia} %{{@database}::%player%::msgList::%{_index}%}%"
+	#wait 4 seconds
+	#add 1 to {_index}
