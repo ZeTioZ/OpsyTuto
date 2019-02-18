@@ -98,7 +98,7 @@ function customItemsTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oPour consulter la liste de ces objets, tu peux utiliser la commande &d&o""/oc"" &a&o!" to {_player}
 		wait 4 seconds
-		send "{@opsylia} &a&oOpsyCraft te propose un nouveau minerai non récoltable et qui peut seulement se crafter !" &a&o!" to {_player}
+		send "{@opsylia} &a&oOpsyCraft te propose un nouveau minerai non récoltable et qui peut seulement se crafter !" to {_player}
 		wait 4 seconds
 		send "{@opsylia} &a&oC'est l'OpsyX et il est 4 fois plus résistant que le diamant ! Il vaut une fortune alors utilise le à bon escient !" to {_player}
 		wait 7 seconds
@@ -246,16 +246,16 @@ function factionTopTutorial(player: player):
 
 #Fonction Tutoriel PvP-Soup et Options
 function pvpSoupOptionsTutorial(player: player):
-	if {{@database}::%player%} is true:
-		send "{@opsylia} &a&oIl y a deux petites fonctionnalités importantes sur OpsyCraft ! Le PvP-Soup et le &2""&d/opt&2""&a&o !" to player
+	if {{@database}::%{_player}%} is true:
+		send "{@opsylia} &a&oIl y a deux petites fonctionnalités importantes sur OpsyCraft ! Le PvP-Soup et le &2""&d/opt&2""&a&o !" to {_player}
 		wait 4 seconds
-		send "{@opsylia} &a&oEt oui ! Le PvP-Soup est activé ! Ce qui veut dire que vous buvez vos soupes instantanément et que celles-ci vous rendent 4 coeurs ou 4 barres de faim !" to player
+		send "{@opsylia} &a&oEt oui ! Le PvP-Soup est activé ! Ce qui veut dire que vous buvez vos soupes instantanément et que celles-ci vous rendent 4 coeurs ou 4 barres de faim !" to {_player}
 		wait 4 seconds
-		send "{@opsylia} &a&oEt grâce à la commande &2""&d/opt&2"" &a&ovous allez pouvoir activer une fonction d'anti-cheat le ""PvP-Distance"" !" to player
+		send "{@opsylia} &a&oEt grâce à la commande &2""&d/opt&2"" &a&ovous allez pouvoir activer une fonction d'anti-cheat le ""PvP-Distance"" !" to {_player}
 		wait 4 seconds
-		send "{@opsylia} &a&oGrâce à cette fonction vous obtiendrez en temps réel la distance entre vous et votre attaquant ! Ainsi, vous saurez si celui-ci à une reach exagérée et vous pourrez le signaler !" to player
+		send "{@opsylia} &a&oGrâce à cette fonction vous obtiendrez en temps réel la distance entre vous et votre attaquant ! Ainsi, vous saurez si celui-ci à une reach exagérée et vous pourrez le signaler !" to {_player}
 		wait 4 seconds
-		send "{@opsylia} &a&oMais ce n'est pas tout !  Le &2""&d/opt&2"" &a&ocontient aussi une fonction de statistiques vous montrant vos morts, kills et votre ratio ! Et bien plus encore !" to player
+		send "{@opsylia} &a&oMais ce n'est pas tout !  Le &2""&d/opt&2"" &a&ocontient aussi une fonction de statistiques vous montrant vos morts, kills et votre ratio ! Et bien plus encore !" to {_player}
 		wait 7 seconds
 
 #Fonction fin du tutoriel
