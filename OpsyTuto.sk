@@ -102,6 +102,7 @@ function customItemsTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oC'est l'OpsyX et il est 4 fois plus résistant que le diamant ! Il vaut une fortune alors utilise le à bon escient !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel des objets customs
 
 #Fonction Tutoriel bourse
@@ -121,6 +122,7 @@ function indexFlowTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oAlors si tu flaires la bonne affaire, tu peux peut-être revendre tes OpsyCoins plus chers que ce que tu ne les a achetés !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel bourse
 
 #Fonction Tutoriel gain d'argent
@@ -140,6 +142,7 @@ function earningMoneyTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oEt n'oublie pas ! Tu peux utiliser le channel &2""&dTrading&2"" &a&odu discord du serveur comme moyen de vente !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel gain d'argent
 
 #Fonction Tutoriel bottle xp
@@ -155,6 +158,7 @@ function bottleXPTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oAstuce: stocke ton xp par niveaux de 30, tu pourras ainsi xp plus vite !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel bottle xp
 
 #Fonction Tutoriel début facile
@@ -172,6 +176,7 @@ function easyStartTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oEt grâce à la conversion de vos Hearts en OpsyCoins, vous pourrez étendre cet espace de stockage en achetant de nouveaux coffres dans la boutique ! &2""&d/boutique&2"" &a&o!" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel début facile
 
 #Fonction Tutoriel quêtes
@@ -189,6 +194,7 @@ function questTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oEssaie de parler avec les personnages ayant leur noms en couleur ! Souvent, ils te proposeront des quêtes !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel quêtes
 
 #Fonction Tutoriel runes et pierres célestes
@@ -210,6 +216,7 @@ function runesEchantementsTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oLes pierres célestes servent à augmenter l'attaque ou la défense de tes équipements ! Mais attention, car comme les runes, les pierres célestes peuvent aussi casser ton équipement !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel runes et pierres célestes
 
 #Fonction Tutoriel tourelles
@@ -225,6 +232,7 @@ function turretTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oTu peux bien évidemment améliorer tes tourelles en changeant de munitions, ou en mettant plus de vie à celle-ci ! Il y a pleins de possibilitées !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel tourelles
 
 #Fonction Tutoriel faction top
@@ -242,6 +250,7 @@ function factionTopTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oEt bien évidemment, les meilleures factions du mois, gagneront des récompenses ! Alors à vos armes et montez dans le classement !" to {_player}
 		wait 4 seconds
+		tutorialEnd(player)
 #Fonction Tutoriel faction top
 
 #Fonction Tutoriel PvP-Soup et Options
@@ -257,6 +266,8 @@ function pvpSoupOptionsTutorial(player: player):
 		wait 4 seconds
 		send "{@opsylia} &a&oMais ce n'est pas tout !  Le &2""&d/opt&2"" &a&ocontient aussi une fonction de statistiques vous montrant vos morts, kills et votre ratio ! Et bien plus encore !" to {_player}
 		wait 7 seconds
+		tutorialEnd(player)
+#Fonction Tutoriel PvP-Soup et Options
 
 #Fonction fin du tutoriel
 function tutorialEnd(player: player):
@@ -425,56 +436,45 @@ command /{@opsytuto} [<text>]:
 					make a gui slot {_count} of player with a gray glass pane named " " to do nothing
 					add 1 to {_count}
 				make a gui slot 0 of player with green glass pane named "&eItems customs" with lore "&dClique ici pour lancer le tutoriel||&dSur les items customs" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					customItemsTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 2 of player with green glass pane named "&eBourse" with lore "&dClique ici pour lancer le tutoriel||&dSur la bourse" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					indexFlowTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 4 of player with green glass pane named "&eGain d'argent" with lore "&dClique ici pour lancer le tutoriel||&dSur le gain d'argent" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					earningMoneyTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 6 of player with green glass pane named "&eBouteilles d'XP" with lore "&dClique ici pour lancer le tutoriel||&dSur les bouteilles d'XP" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					bottleXPTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 8 of player with green glass pane named "&eDébut facilité" with lore "&dClique ici pour lancer le tutoriel||&dSur le début facilité" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					easyStartTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 9 of player with green glass pane named "&eQuêtes" with lore "&dClique ici pour lancer le tutoriel||&dSur les quêtes" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					questTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 11 of player with green glass pane named "&eRunes et Pierres célestes" with lore "&dClique ici pour lancer le tutoriel||&dSur les runes et les pierres célestes" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					runesEchantementsTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 13 of player with green glass pane named "&eTourelles automatiques" with lore "&dClique ici pour lancer le tutoriel||&dSur les tourelles automatiques" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					turretTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 15 of player with green glass pane named "&eClassement des factions" with lore "&dClique ici pour lancer le tutoriel||&dSur le classement des factions" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					factionTopTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
 				make a gui slot 17 of player with green glass pane named "&ePvP-Soup et Options" with lore "&dClique ici pour lancer le tutoriel||&dSur le PvP-Soup et les options joueur" to run:
+					close player's inventory
 					set {{@database}::%player%} to true
 					pvpSoupOptionsTutorial(player)
-					tutorialEnd(player)
-					close player's inventory
-
 on chat:
 	if {{@database}::%player%} is true:
 		if message contains "stop":
