@@ -75,6 +75,7 @@ on quit:
 #Fonction d'ouverture du menu d'acceptation
 function openAcceptationCase(player: player):
 	if {{@database}::%{_player}%} is true:
+		set {{@database}::%{_player}%::canClose} to false
 		wait 1 tick
 		open virtual chest with size 1 named "&8Voulez-vous faire le tutoriel ?" to {_player}
 		wait 1 tick
@@ -83,10 +84,12 @@ function openAcceptationCase(player: player):
 			make a gui slot {_count} of {_player} with a gray glass pane named " " to do nothing
 			add 1 to {_count}
 		make a gui slot 3 of {_player} with green glass pane named "&eFaire le tutoriel" with lore "&dClique ici pour lancer le tutoriel du serveur" to run:
+			delete {{@database}::%{_player}%::*}
 			close player's inventory
 			execute player command "/{@opsytuto}"
 		make a gui slot 5 of {_player} with green glass pane named "&eNe pas faire le tutoriel" with lore "&dClique ici pour fermer cette fenêtre||&dEt ne pas faire ce tutoriel" to run:
 			send "{@prefix} {@opsytuto.no_tutorial}" to {_player}
+			delete {{@database}::%{_player}%::*}
 			delete {{@database}::%{_player}%}
 			close player's inventory
 #Fonction d'ouverture du menu d'acceptation
@@ -282,7 +285,7 @@ on Authme login:
 	wait 5 ticks
 	openAcceptationCase(player)
 on inventory close:
-	if {{@database}::%player%} is true:
+	if {{@database}::%player%::canClose} is false:
 		send "{@prefix} {@error.can_not_close}" to player
 		wait 1 tick
 		openAcceptationCase(player)
